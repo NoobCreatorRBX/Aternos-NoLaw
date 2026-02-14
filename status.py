@@ -2,38 +2,23 @@ import requests
 import os
 from datetime import datetime
 
-HOST = os.environ["SERVER_IP"]
+SERVER_ID = os.environ["SERVER_ID"]
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 MESSAGE_ID = os.environ["MESSAGE_ID"]
 
 def check_server():
     try:
         r = requests.get(
-            f"https://api.mcstatus.io/v2/status/java/{HOST}",
+            f"https://aternos.org/ajax/server/status.php?server={SERVER_ID}",
             timeout=10
         )
         data = r.json()
 
-        # Strict validation
-        if not data.get("online"):
-            return False
-
-        players = data.get("players")
-
-        # Must have valid player data structure
-        if not players:
-            return False
-
-        # Aternos proxy sometimes lies about "online"
-        # If max players is 0 or missing, treat as offline
-        if players.get("max", 0) == 0:
-            return False
-
-        return True
+        # Real Aternos state
+        return data.get("status") == "online"
 
     except:
         return False
-
 
 online = check_server()
 
@@ -52,5 +37,6 @@ embed = {
 }
 
 requests.patch(f"{WEBHOOK_URL}/messages/{MESSAGE_ID}", json=embed)
+
 
 
