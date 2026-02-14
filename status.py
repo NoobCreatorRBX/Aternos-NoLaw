@@ -10,7 +10,13 @@ def check_server():
     try:
         r = requests.get(f"https://api.mcsrvstat.us/2/{HOST}", timeout=10)
         data = r.json()
-        return data.get("online", False)
+
+        # Server must be marked online AND have players/max info
+        if data.get("online") and "players" in data:
+            return True
+        else:
+            return False
+
     except:
         return False
 
