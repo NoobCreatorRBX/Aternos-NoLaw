@@ -8,11 +8,11 @@ MESSAGE_ID = os.environ["MESSAGE_ID"]
 
 def check_server():
     try:
-        r = requests.get(f"https://api.mcsrvstat.us/2/{HOST}", timeout=10)
+        r = requests.get(f"https://api.mcstatus.io/v2/status/java/{HOST}", timeout=10)
         data = r.json()
 
-        # Server must be marked online AND have players/max info
-        if data.get("online") and "players" in data:
+        # True only if server is actually responding properly
+        if data.get("online") and data.get("players") is not None:
             return True
         else:
             return False
@@ -37,3 +37,4 @@ data = {
 }
 
 requests.patch(f"{WEBHOOK_URL}/messages/{MESSAGE_ID}", json=data)
+
