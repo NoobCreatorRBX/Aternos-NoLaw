@@ -3,7 +3,7 @@ import socket
 import os
 
 HOST = os.environ["SERVER_IP"]
-PORT = 25565
+PORT = 25139
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 MESSAGE_ID = os.environ["MESSAGE_ID"]
 
