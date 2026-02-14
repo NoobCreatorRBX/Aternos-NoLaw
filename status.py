@@ -1,27 +1,31 @@
 import requests
-import socket
 import os
+from datetime import datetime
 
 HOST = os.environ["SERVER_IP"]
-PORT = 25139
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 MESSAGE_ID = os.environ["MESSAGE_ID"]
 
 def check_server():
     try:
-        socket.create_connection((HOST, PORT), timeout=5)
-        return "ONLINE"
+        r = requests.get(f"https://api.mcsrvstat.us/2/{HOST}", timeout=10)
+        data = r.json()
+        return data.get("online", False)
     except:
-        return "OFFLINE"
+        return False
 
-status = check_server()
+online = check_server()
 
-color = 5763719 if status == "ONLINE" else 15548997
+status = "ONLINE" if online else "OFFLINE"
+color = 5763719 if online else 15548997
 
 data = {
     "embeds": [{
         "title": "🎮 Aternos Server",
         "description": f"Status: **{status}**",
+        "footer": {
+            "text": f"Last checked: {datetime.utcnow().strftime('%H:%M:%S')} UTC"
+        },
         "color": color
     }]
 }
