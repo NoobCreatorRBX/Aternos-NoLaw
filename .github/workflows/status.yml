@@ -1,0 +1,20 @@
+name: Aternos Status
+
+on:
+  schedule:
+    - cron: "* * * * *"   # every 1 minute
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install & Run
+        run: |
+          pip install requests
+          python status.py
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          MESSAGE_ID: ${{ secrets.MESSAGE_ID }}
