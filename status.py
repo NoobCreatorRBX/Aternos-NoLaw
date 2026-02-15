@@ -2,20 +2,29 @@ import requests
 import os
 from datetime import datetime
 
-SERVER_ID = os.environ["SERVER_ID"]
+HOST = os.environ["SERVER_IP"]
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 MESSAGE_ID = os.environ["MESSAGE_ID"]
 
 def check_server():
     try:
         r = requests.get(
-            f"https://aternos.org/ajax/server/status.php?server={SERVER_ID}",
+            f"https://api.mcstatus.io/v2/status/java/{HOST}",
             timeout=10
         )
         data = r.json()
 
-        # Real Aternos state
-        return data.get("status") == "online"
+        if not data.get("online"):
+            return False
+
+        # Require real Minecraft data
+        if not data.get("version"):
+            return False
+
+        if not data.get("players"):
+            return False
+
+        return True
 
     except:
         return False
@@ -37,6 +46,3 @@ embed = {
 }
 
 requests.patch(f"{WEBHOOK_URL}/messages/{MESSAGE_ID}", json=embed)
-
-
-
